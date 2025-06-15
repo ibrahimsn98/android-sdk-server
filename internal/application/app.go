@@ -15,7 +15,7 @@ type App interface {
 type Application struct {
 }
 
-func (a *Application) Startup(ctx context.Context, app Module) (err error) {
+func (a *Application) Startup(_ context.Context, app Module) (err error) {
 	executor := shell.NewExecutor()
 
 	sdkPath, err := system.FindAndroidSDKPath()

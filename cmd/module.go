@@ -2,7 +2,6 @@ package main
 
 import (
 	"android-cmd-server/internal/application"
-	"android-cmd-server/internal/infrastructure/logger"
 	"android-cmd-server/internal/infrastructure/waiter"
 	"context"
 	"fmt"
@@ -12,14 +11,9 @@ import (
 )
 
 type module struct {
-	logger *logger.Logger
 	api    *echo.Echo
 	app    application.App
 	waiter waiter.Waiter
-}
-
-func (a *module) Logger() *logger.Logger {
-	return a.logger
 }
 
 func (a *module) Api() *echo.Echo {
@@ -33,17 +27,17 @@ func (a *module) Waiter() waiter.Waiter {
 func (a *module) waitForApi(ctx context.Context) error {
 	group, gCtx := errgroup.WithContext(ctx)
 	group.Go(func() error {
-		a.Logger().Info("[Rest] Server is started...")
-		defer a.Logger().Info("[Rest] Server shutdown.")
+		fmt.Println("Server is started.")
+		defer fmt.Println("Server shutdown.")
 
-		if err := a.api.Start("0.0.0.0:8001"); err != nil {
+		if err := a.api.Start("0.0.0.0:9292"); err != nil {
 			return err
 		}
 		return nil
 	})
 	group.Go(func() error {
 		<-gCtx.Done()
-		a.Logger().Info("[Rest] Server to be shutdown...")
+		fmt.Println("Server to be shutdown..")
 		stopped := make(chan struct{})
 		go func() {
 			err := a.api.Shutdown(ctx)
@@ -55,7 +49,7 @@ func (a *module) waitForApi(ctx context.Context) error {
 		timeout := time.NewTimer(2000 * time.Millisecond)
 		select {
 		case <-timeout.C:
-			err := a.api.Shutdown(ctx)
+			err := a.api.Close()
 			if err != nil {
 				return err
 			}

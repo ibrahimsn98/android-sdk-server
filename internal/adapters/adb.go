@@ -3,6 +3,7 @@ package adapters
 import (
 	"android-cmd-server/internal/core/ports"
 	"context"
+	"errors"
 	"path/filepath"
 )
 
@@ -16,6 +17,7 @@ func NewAdb(exec ports.Executor, sdkPath string) *Adb {
 }
 
 func (a *Adb) Devices(ctx context.Context) (*ports.Output, error) {
+	return nil, errors.New("test error")
 	return a.executor.RunCommand(ctx, a.binPath, "devices")
 }
 

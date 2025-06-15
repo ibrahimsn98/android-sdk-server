@@ -2,7 +2,6 @@ package main
 
 import (
 	"android-cmd-server/internal/application"
-	"android-cmd-server/internal/infrastructure/logger"
 	"android-cmd-server/internal/infrastructure/waiter"
 	"fmt"
 	"github.com/go-playground/validator/v10"
@@ -32,24 +31,15 @@ func (cv *CustomValidator) Validate(i interface{}) error {
 
 func run() (err error) {
 	m := module{}
-	m.logger, err = logger.NewLogger()
-	if err != nil {
-		return
-	}
-
 	m.api = echo.New()
-	//m.api.HTTPErrorHandler = server.ErrorHandler
 	m.api.Validator = &CustomValidator{validator: validator.New()}
-	m.api.Use(middleware.Logger())
+	m.api.Use(middleware.LoggerWithConfig(middleware.LoggerConfig{
+		Format: "${time_rfc3339_nano} ${method} ${uri} (${status})\n",
+	}))
 	m.api.Use(middleware.CORSWithConfig(middleware.CORSConfig{
 		AllowOrigins: []string{"*"},
 		AllowHeaders: []string{"*"},
 	}))
-
-	m.logger, err = logger.NewLogger()
-	if err != nil {
-		return
-	}
 
 	m.waiter = waiter.New(waiter.CatchSignals())
 
