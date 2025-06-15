@@ -19,6 +19,14 @@ func (a *Adb) Devices(ctx context.Context) (*ports.Output, error) {
 	return a.executor.RunCommand(ctx, a.binPath, "devices")
 }
 
+func (a *Adb) StopDevice(ctx context.Context, deviceSerial string) (*ports.Output, error) {
+	return a.executor.RunCommand(ctx, a.binPath, "-s", deviceSerial, "emu", "kill")
+}
+
+func (a *Adb) RestartDevice(ctx context.Context, deviceSerial string) (*ports.Output, error) {
+	return a.executor.RunCommand(ctx, a.binPath, "-s", deviceSerial, "emu", "restart")
+}
+
 func (a *Adb) StartServer(ctx context.Context) (*ports.Output, error) {
 	return a.executor.RunCommand(ctx, a.binPath, "start-server")
 }
