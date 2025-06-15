@@ -38,15 +38,13 @@ func (a *Application) Startup(ctx context.Context, app Module) (err error) {
 		executor,
 		filepath.Join(androidHome, "tools", "emulator"),
 	)
-
-	out1, err := sdkManager.ListPackages(ctx)
-	fmt.Println("Success:", out1.Stdout, "Err:", out1.Stderr)
-
+	
 	out3, err := adb.Devices(ctx)
 	fmt.Println("Success:", out3.Stdout, "Err:", out3.Stderr)
 
 	fmt.Println(emulator)
 
 	api.NewAVDController(app.Api(), avdManager)
+	api.NewSDKController(app.Api(), sdkManager)
 	return nil
 }
