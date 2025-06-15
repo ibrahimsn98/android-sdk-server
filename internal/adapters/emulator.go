@@ -3,7 +3,7 @@ package adapters
 import (
 	"android-cmd-server/internal/core/ports"
 	"context"
-	"fmt"
+	"path/filepath"
 )
 
 type Emulator struct {
@@ -12,7 +12,7 @@ type Emulator struct {
 }
 
 func NewEmulator(exec ports.Executor, sdkPath string) *Emulator {
-	return &Emulator{executor: exec, binPath: fmt.Sprintf("%s/emulator/emulator", sdkPath)}
+	return &Emulator{executor: exec, binPath: filepath.Join(sdkPath, "emulator", "emulator")}
 }
 
 func (e *Emulator) Start(ctx context.Context, avdName string, args ...string) (*ports.Output, error) {

@@ -26,10 +26,11 @@ func NewAVDController(
 
 func (c *AVDController) createAVD() server.HandlerFunc[avd.CreateAVD, domain.Response] {
 	return func(ctx server.ApiContext, req *avd.CreateAVD) (*domain.Response, error) {
-		avdManagerArgs := ports.AVDManagerArgs{
-			SDKVersion: ctx.Header("sdk-version"),
+		args, err := c.createAVDManagerArgs(ctx)
+		if err != nil {
+			return nil, err
 		}
-		output, err := c.avdManager.CreateAVD(ctx.Context(), avdManagerArgs, req.Name, req.PackagePath, req.Options...)
+		output, err := c.avdManager.CreateAVD(ctx.Context(), args, req.Name, req.PackagePath, req.Options...)
 		if err != nil {
 			return nil, err
 		}
@@ -42,10 +43,11 @@ func (c *AVDController) createAVD() server.HandlerFunc[avd.CreateAVD, domain.Res
 
 func (c *AVDController) listAVDs() server.HandlerFunc[server.Empty, domain.Response] {
 	return func(ctx server.ApiContext, req *server.Empty) (*domain.Response, error) {
-		avdManagerArgs := ports.AVDManagerArgs{
-			SDKVersion: ctx.Header("sdk-version"),
+		args, err := c.createAVDManagerArgs(ctx)
+		if err != nil {
+			return nil, err
 		}
-		output, err := c.avdManager.ListAVDs(ctx.Context(), avdManagerArgs)
+		output, err := c.avdManager.ListAVDs(ctx.Context(), args)
 		if err != nil {
 			return nil, err
 		}
@@ -58,10 +60,11 @@ func (c *AVDController) listAVDs() server.HandlerFunc[server.Empty, domain.Respo
 
 func (c *AVDController) deleteAVD() server.HandlerFunc[avd.DeleteAVD, domain.Response] {
 	return func(ctx server.ApiContext, req *avd.DeleteAVD) (*domain.Response, error) {
-		avdManagerArgs := ports.AVDManagerArgs{
-			SDKVersion: ctx.Header("sdk-version"),
+		args, err := c.createAVDManagerArgs(ctx)
+		if err != nil {
+			return nil, err
 		}
-		output, err := c.avdManager.DeleteAVD(ctx.Context(), avdManagerArgs, req.Name)
+		output, err := c.avdManager.DeleteAVD(ctx.Context(), args, req.Name)
 		if err != nil {
 			return nil, err
 		}
@@ -70,4 +73,14 @@ func (c *AVDController) deleteAVD() server.HandlerFunc[avd.DeleteAVD, domain.Res
 			Stderr: output.Stderr,
 		}, nil
 	}
+}
+
+func (c *AVDController) createAVDManagerArgs(ctx server.ApiContext) (*ports.AVDManagerArgs, error) {
+	sdkVersion, err := domain.CheckSdkVersion(ctx.Header("sdk-version"))
+	if err != nil {
+		return nil, err
+	}
+	return &ports.AVDManagerArgs{
+		SDKVersion: sdkVersion,
+	}, nil
 }

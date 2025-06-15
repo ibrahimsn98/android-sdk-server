@@ -26,10 +26,11 @@ func NewSDKController(
 
 func (c *SDKController) updateAll() server.HandlerFunc[server.Empty, domain.Response] {
 	return func(ctx server.ApiContext, req *server.Empty) (*domain.Response, error) {
-		sdkManagerArgs := ports.SDKManagerArgs{
-			SDKVersion: ctx.Header("sdk-version"),
+		args, err := c.createSDKManagerArgs(ctx)
+		if err != nil {
+			return nil, err
 		}
-		output, err := c.sdkManager.UpdateAll(ctx.Context(), sdkManagerArgs)
+		output, err := c.sdkManager.UpdateAll(ctx.Context(), args)
 		if err != nil {
 			return nil, err
 		}
@@ -42,10 +43,11 @@ func (c *SDKController) updateAll() server.HandlerFunc[server.Empty, domain.Resp
 
 func (c *SDKController) listPackages() server.HandlerFunc[server.Empty, domain.Response] {
 	return func(ctx server.ApiContext, req *server.Empty) (*domain.Response, error) {
-		sdkManagerArgs := ports.SDKManagerArgs{
-			SDKVersion: ctx.Header("sdk-version"),
+		args, err := c.createSDKManagerArgs(ctx)
+		if err != nil {
+			return nil, err
 		}
-		output, err := c.sdkManager.ListPackages(ctx.Context(), sdkManagerArgs)
+		output, err := c.sdkManager.ListPackages(ctx.Context(), args)
 		if err != nil {
 			return nil, err
 		}
@@ -58,10 +60,11 @@ func (c *SDKController) listPackages() server.HandlerFunc[server.Empty, domain.R
 
 func (c *SDKController) installPackages() server.HandlerFunc[sdk.InstallPackages, domain.Response] {
 	return func(ctx server.ApiContext, req *sdk.InstallPackages) (*domain.Response, error) {
-		sdkManagerArgs := ports.SDKManagerArgs{
-			SDKVersion: ctx.Header("sdk-version"),
+		args, err := c.createSDKManagerArgs(ctx)
+		if err != nil {
+			return nil, err
 		}
-		output, err := c.sdkManager.InstallPackages(ctx.Context(), sdkManagerArgs, req.Packages)
+		output, err := c.sdkManager.InstallPackages(ctx.Context(), args, req.Packages)
 		if err != nil {
 			return nil, err
 		}
@@ -70,4 +73,14 @@ func (c *SDKController) installPackages() server.HandlerFunc[sdk.InstallPackages
 			Stderr: output.Stderr,
 		}, nil
 	}
+}
+
+func (c *SDKController) createSDKManagerArgs(ctx server.ApiContext) (*ports.SDKManagerArgs, error) {
+	sdkVersion, err := domain.CheckSdkVersion(ctx.Header("sdk-version"))
+	if err != nil {
+		return nil, err
+	}
+	return &ports.SDKManagerArgs{
+		SDKVersion: sdkVersion,
+	}, nil
 }

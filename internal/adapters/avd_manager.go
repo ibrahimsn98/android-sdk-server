@@ -3,7 +3,7 @@ package adapters
 import (
 	"android-cmd-server/internal/core/ports"
 	"context"
-	"fmt"
+	"path/filepath"
 )
 
 type AVDManager struct {
@@ -15,13 +15,13 @@ func NewAVDManager(exec ports.Executor, sdkPath string) *AVDManager {
 	return &AVDManager{executor: exec, sdkPath: sdkPath}
 }
 
-func (a *AVDManager) getBinPath(avdManagerArgs ports.AVDManagerArgs) string {
-	return fmt.Sprintf("%s/cmdline-tools/%s/bin/avdmanager", a.sdkPath, avdManagerArgs.SDKVersion)
+func (a *AVDManager) getBinPath(avdManagerArgs *ports.AVDManagerArgs) string {
+	return filepath.Join(a.sdkPath, "cmdline-tools", avdManagerArgs.SDKVersion, "bin", "avdmanager")
 }
 
 func (a *AVDManager) CreateAVD(
 	ctx context.Context,
-	avdManagerArgs ports.AVDManagerArgs,
+	avdManagerArgs *ports.AVDManagerArgs,
 	name string,
 	packagePath string,
 	options ...string,
@@ -33,7 +33,7 @@ func (a *AVDManager) CreateAVD(
 
 func (a *AVDManager) DeleteAVD(
 	ctx context.Context,
-	avdManagerArgs ports.AVDManagerArgs,
+	avdManagerArgs *ports.AVDManagerArgs,
 	name string,
 ) (*ports.Output, error) {
 	args := []string{"delete", "avd", "--name", name}
@@ -42,7 +42,7 @@ func (a *AVDManager) DeleteAVD(
 
 func (a *AVDManager) ListAVDs(
 	ctx context.Context,
-	avdManagerArgs ports.AVDManagerArgs,
+	avdManagerArgs *ports.AVDManagerArgs,
 ) (*ports.Output, error) {
 	args := []string{"list", "avd"}
 	return a.executor.RunCommand(ctx, a.getBinPath(avdManagerArgs), args...)
