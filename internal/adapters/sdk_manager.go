@@ -3,30 +3,39 @@ package adapters
 import (
 	"android-cmd-server/internal/core/ports"
 	"context"
+	"fmt"
 )
 
 type SDKManager struct {
 	executor ports.Executor
-	binPath  string
+	sdkPath  string
 }
 
-func NewSDKManager(exec ports.Executor, binPath string) *SDKManager {
-	return &SDKManager{executor: exec, binPath: binPath}
+func NewSDKManager(exec ports.Executor, sdkPath string) *SDKManager {
+	return &SDKManager{executor: exec, sdkPath: sdkPath}
 }
 
-func (s *SDKManager) UpdateAll(ctx context.Context) (*ports.Output, error) {
-	return s.executor.RunCommand(ctx, s.binPath, "--update")
+func (s *SDKManager) getBinPath(sdkManagerArgs ports.SDKManagerArgs) string {
+	return fmt.Sprintf("%s/cmdline-tools/%s/bin/sdkmanager", s.sdkPath, sdkManagerArgs.SDKVersion)
 }
 
-func (s *SDKManager) ListPackages(ctx context.Context) (*ports.Output, error) {
-	out, err := s.executor.RunCommand(ctx, s.binPath, "--list")
+func (s *SDKManager) UpdateAll(ctx context.Context, sdkManagerArgs ports.SDKManagerArgs) (*ports.Output, error) {
+	return s.executor.RunCommand(ctx, s.getBinPath(sdkManagerArgs), "--update")
+}
+
+func (s *SDKManager) ListPackages(ctx context.Context, sdkManagerArgs ports.SDKManagerArgs) (*ports.Output, error) {
+	out, err := s.executor.RunCommand(ctx, s.getBinPath(sdkManagerArgs), "--list")
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (s *SDKManager) InstallPackages(ctx context.Context, packages []string) (*ports.Output, error) {
+func (s *SDKManager) InstallPackages(
+	ctx context.Context,
+	sdkManagerArgs ports.SDKManagerArgs,
+	packages []string,
+) (*ports.Output, error) {
 	args := append([]string{"--install"}, packages...)
-	return s.executor.RunCommand(ctx, s.binPath, args...)
+	return s.executor.RunCommand(ctx, s.getBinPath(sdkManagerArgs), args...)
 }

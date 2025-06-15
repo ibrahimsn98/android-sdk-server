@@ -3,6 +3,7 @@ package adapters
 import (
 	"android-cmd-server/internal/core/ports"
 	"context"
+	"fmt"
 )
 
 type Adb struct {
@@ -10,8 +11,8 @@ type Adb struct {
 	binPath  string
 }
 
-func NewAdb(exec ports.Executor, binPath string) *Adb {
-	return &Adb{executor: exec, binPath: binPath}
+func NewAdb(exec ports.Executor, sdkPath string) *Adb {
+	return &Adb{executor: exec, binPath: fmt.Sprintf("%s/platform-tools/adb", sdkPath)}
 }
 
 func (a *Adb) Devices(ctx context.Context) (*ports.Output, error) {

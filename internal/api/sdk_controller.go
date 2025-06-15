@@ -26,7 +26,10 @@ func NewSDKController(
 
 func (c *SDKController) updateAll() server.HandlerFunc[server.Empty, domain.Response] {
 	return func(ctx server.ApiContext, req *server.Empty) (*domain.Response, error) {
-		output, err := c.sdkManager.UpdateAll(ctx.Context())
+		sdkManagerArgs := ports.SDKManagerArgs{
+			SDKVersion: ctx.Header("sdk-version"),
+		}
+		output, err := c.sdkManager.UpdateAll(ctx.Context(), sdkManagerArgs)
 		if err != nil {
 			return nil, err
 		}
@@ -39,7 +42,10 @@ func (c *SDKController) updateAll() server.HandlerFunc[server.Empty, domain.Resp
 
 func (c *SDKController) listPackages() server.HandlerFunc[server.Empty, domain.Response] {
 	return func(ctx server.ApiContext, req *server.Empty) (*domain.Response, error) {
-		output, err := c.sdkManager.ListPackages(ctx.Context())
+		sdkManagerArgs := ports.SDKManagerArgs{
+			SDKVersion: ctx.Header("sdk-version"),
+		}
+		output, err := c.sdkManager.ListPackages(ctx.Context(), sdkManagerArgs)
 		if err != nil {
 			return nil, err
 		}
@@ -52,7 +58,10 @@ func (c *SDKController) listPackages() server.HandlerFunc[server.Empty, domain.R
 
 func (c *SDKController) installPackages() server.HandlerFunc[sdk.InstallPackages, domain.Response] {
 	return func(ctx server.ApiContext, req *sdk.InstallPackages) (*domain.Response, error) {
-		output, err := c.sdkManager.InstallPackages(ctx.Context(), req.Packages)
+		sdkManagerArgs := ports.SDKManagerArgs{
+			SDKVersion: ctx.Header("sdk-version"),
+		}
+		output, err := c.sdkManager.InstallPackages(ctx.Context(), sdkManagerArgs, req.Packages)
 		if err != nil {
 			return nil, err
 		}

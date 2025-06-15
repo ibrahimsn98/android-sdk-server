@@ -26,7 +26,10 @@ func NewAVDController(
 
 func (c *AVDController) createAVD() server.HandlerFunc[avd.CreateAVD, domain.Response] {
 	return func(ctx server.ApiContext, req *avd.CreateAVD) (*domain.Response, error) {
-		output, err := c.avdManager.CreateAVD(ctx.Context(), req.Name, req.PackagePath, req.Options...)
+		avdManagerArgs := ports.AVDManagerArgs{
+			SDKVersion: ctx.Header("sdk-version"),
+		}
+		output, err := c.avdManager.CreateAVD(ctx.Context(), avdManagerArgs, req.Name, req.PackagePath, req.Options...)
 		if err != nil {
 			return nil, err
 		}
@@ -39,7 +42,10 @@ func (c *AVDController) createAVD() server.HandlerFunc[avd.CreateAVD, domain.Res
 
 func (c *AVDController) listAVDs() server.HandlerFunc[server.Empty, domain.Response] {
 	return func(ctx server.ApiContext, req *server.Empty) (*domain.Response, error) {
-		output, err := c.avdManager.ListAVDs(ctx.Context())
+		avdManagerArgs := ports.AVDManagerArgs{
+			SDKVersion: ctx.Header("sdk-version"),
+		}
+		output, err := c.avdManager.ListAVDs(ctx.Context(), avdManagerArgs)
 		if err != nil {
 			return nil, err
 		}
@@ -52,7 +58,10 @@ func (c *AVDController) listAVDs() server.HandlerFunc[server.Empty, domain.Respo
 
 func (c *AVDController) deleteAVD() server.HandlerFunc[avd.DeleteAVD, domain.Response] {
 	return func(ctx server.ApiContext, req *avd.DeleteAVD) (*domain.Response, error) {
-		output, err := c.avdManager.DeleteAVD(ctx.Context(), req.Name)
+		avdManagerArgs := ports.AVDManagerArgs{
+			SDKVersion: ctx.Header("sdk-version"),
+		}
+		output, err := c.avdManager.DeleteAVD(ctx.Context(), avdManagerArgs, req.Name)
 		if err != nil {
 			return nil, err
 		}

@@ -29,3 +29,7 @@ func (a *apiContext) Set(key string, value any) {
 func (a *apiContext) Get(key string) any {
 	return a.ec.Get(key)
 }
+
+func (a *apiContext) Header(name string) string {
+	return a.ec.Request().Header.Get(name)
+}
