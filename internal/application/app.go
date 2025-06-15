@@ -5,7 +5,6 @@ import (
 	"android-cmd-server/internal/api"
 	"android-cmd-server/internal/infrastructure/shell"
 	"context"
-	"fmt"
 	"path/filepath"
 )
 
@@ -39,10 +38,9 @@ func (a *Application) Startup(ctx context.Context, app Module) (err error) {
 		filepath.Join(androidHome, "tools", "emulator"),
 	)
 
-	fmt.Println(emulator)
-
 	api.NewAVDController(app.Api(), avdManager)
 	api.NewSDKController(app.Api(), sdkManager)
 	api.NewADBController(app.Api(), adb)
+	api.NewEmulatorController(app.Api(), emulator)
 	return nil
 }
