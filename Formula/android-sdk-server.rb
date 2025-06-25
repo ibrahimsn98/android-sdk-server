@@ -17,6 +17,9 @@ class AndroidSdkServer < Formula
     working_dir var
     log_path var/"log/android-sdk-server.log"
     error_log_path var/"log/android-sdk-server.log"
+    environment_variables PATH: ENV["PATH"], \
+                          ANDROID_HOME: ENV["ANDROID_HOME"], \
+                          ANDROID_SDK_ROOT: ENV["ANDROID_SDK_ROOT"]
   end
 
 end
