@@ -1,8 +1,8 @@
 class AndroidSdkServer < Formula
-  desc "My always-on macOS background service"
+  desc "Service to manage Android SDK tasks over a server"
   homepage "https://github.com/ibrahimsn98/android-sdk-server"
-  url "https://github.com/ibrahimsn98/android-sdk-server/archive/refs/tags/v1.0.0.tar.gz"
-  sha256 "<sha256sum>"
+  url "https://github.com/ibrahimsn98/android-sdk-server/archive/refs/tags/1.0.0.tar.gz"
+  sha256 "63c70e7a05ed3aafc5a65d88a7893ab8a2da372b2504542a1546901d194077ba"
   license "Apache"
 
   depends_on "go" => :build
@@ -11,41 +11,12 @@ class AndroidSdkServer < Formula
     system "go", "build", "-o", "bin/android-sdk-server", *std_go_args, "./cmd"
   end
 
-  plist_options manual: "android-sdk-server"
-
-  def plist
-    <<~EOS
-      <?xml version="1.0" encoding="UTF-8"?>
-      <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN"
-       "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-      <plist version="1.0">
-      <dict>
-          <key>Label</key>
-          <string>com.android.sdkserver</string>
-
-          <key>ProgramArguments</key>
-          <array>
-              <string>#{opt_bin}/android-sdk-service</string>
-          </array>
-
-          <key>RunAtLoad</key>
-          <true/>
-
-          <key>KeepAlive</key>
-          <true/>
-
-          <key>StandardOutPath</key>
-          <string>/tmp/android-sdk-service.log</string>
-
-          <key>StandardErrorPath</key>
-          <string>/tmp/android-sdk-service.err.log</string>
-      </dict>
-      </plist>
-
-    EOS
+  service do
+    run opt_bin/"android-sdk-server"
+    keep_alive true
+    working_dir var
+    log_path var/"log/android-sdk-server.log"
+    error_log_path var/"log/android-sdk-server.log"
   end
 
-  test do
-    system "#{bin}/android-sdk-server", "--version"
-  end
 end
