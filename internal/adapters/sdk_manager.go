@@ -20,11 +20,11 @@ func (s *SDKManager) getBinPath(sdkManagerArgs *ports.SDKManagerArgs) string {
 }
 
 func (s *SDKManager) UpdateAll(ctx context.Context, sdkManagerArgs *ports.SDKManagerArgs) (*ports.Output, error) {
-	return s.executor.RunCommand(ctx, s.getBinPath(sdkManagerArgs), "--update")
+	return s.executor.RunCommand(ctx, s.getBinPath(sdkManagerArgs), []string{"--update"}, []string{})
 }
 
 func (s *SDKManager) ListPackages(ctx context.Context, sdkManagerArgs *ports.SDKManagerArgs) (*ports.Output, error) {
-	out, err := s.executor.RunCommand(ctx, s.getBinPath(sdkManagerArgs), "--list")
+	out, err := s.executor.RunCommand(ctx, s.getBinPath(sdkManagerArgs), []string{"--list"}, []string{})
 	if err != nil {
 		return nil, err
 	}
@@ -37,5 +37,5 @@ func (s *SDKManager) InstallPackages(
 	packages []string,
 ) (*ports.Output, error) {
 	args := append([]string{"--install"}, packages...)
-	return s.executor.RunCommand(ctx, s.getBinPath(sdkManagerArgs), args...)
+	return s.executor.RunCommand(ctx, s.getBinPath(sdkManagerArgs), args, []string{})
 }

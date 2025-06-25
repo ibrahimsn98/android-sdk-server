@@ -30,7 +30,7 @@ func (c *AVDController) createAVD() server.HandlerFunc[avd.CreateAVD, domain.Res
 		if err != nil {
 			return nil, err
 		}
-		output, err := c.avdManager.CreateAVD(ctx.Context(), args, req.Name, req.PackagePath, req.Options...)
+		output, err := c.avdManager.CreateAVD(ctx.Context(), args, req.Name, req.PackagePath, req.Options)
 		if err != nil {
 			return nil, err
 		}

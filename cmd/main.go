@@ -36,13 +36,8 @@ func run() (err error) {
 	m.api.Use(middleware.LoggerWithConfig(middleware.LoggerConfig{
 		Format: "${time_rfc3339_nano} ${method} ${uri} (${status})\n",
 	}))
-	m.api.Use(middleware.CORSWithConfig(middleware.CORSConfig{
-		AllowOrigins: []string{"*"},
-		AllowHeaders: []string{"*"},
-	}))
 
 	m.waiter = waiter.New(waiter.CatchSignals())
-
 	m.app = &application.Application{}
 	err = m.app.Startup(m.waiter.Context(), &m)
 	if err != nil {

@@ -24,11 +24,11 @@ func (a *AVDManager) CreateAVD(
 	avdManagerArgs *ports.AVDManagerArgs,
 	name string,
 	packagePath string,
-	options ...string,
+	options []string,
 ) (*ports.Output, error) {
 	args := []string{"create", "avd", "--name", name, "--package", packagePath}
 	args = append(args, options...)
-	return a.executor.RunCommand(ctx, a.getBinPath(avdManagerArgs), args...)
+	return a.executor.RunCommand(ctx, a.getBinPath(avdManagerArgs), args, []string{"no"})
 }
 
 func (a *AVDManager) DeleteAVD(
@@ -37,7 +37,7 @@ func (a *AVDManager) DeleteAVD(
 	name string,
 ) (*ports.Output, error) {
 	args := []string{"delete", "avd", "--name", name}
-	return a.executor.RunCommand(ctx, a.getBinPath(avdManagerArgs), args...)
+	return a.executor.RunCommand(ctx, a.getBinPath(avdManagerArgs), args, []string{})
 }
 
 func (a *AVDManager) ListAVDs(
@@ -45,5 +45,5 @@ func (a *AVDManager) ListAVDs(
 	avdManagerArgs *ports.AVDManagerArgs,
 ) (*ports.Output, error) {
 	args := []string{"list", "avd"}
-	return a.executor.RunCommand(ctx, a.getBinPath(avdManagerArgs), args...)
+	return a.executor.RunCommand(ctx, a.getBinPath(avdManagerArgs), args, []string{})
 }

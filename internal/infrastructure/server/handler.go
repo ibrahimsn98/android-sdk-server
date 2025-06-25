@@ -2,6 +2,7 @@ package server
 
 import (
 	"context"
+	"fmt"
 	"github.com/labstack/echo/v4"
 	"net/http"
 	"reflect"
@@ -45,6 +46,7 @@ func Handle[Req any, Res any](fn HandlerFunc[Req, Res]) echo.HandlerFunc {
 
 		resp, err := fn(appCtx, &req)
 		if err != nil {
+			fmt.Println("Err:", err)
 			return c.JSON(http.StatusInternalServerError, map[string]string{
 				"error": err.Error(),
 			})

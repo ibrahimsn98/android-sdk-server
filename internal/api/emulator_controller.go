@@ -24,7 +24,7 @@ func NewEmulatorController(
 
 func (c *EmulatorController) start() server.HandlerFunc[emulator.Start, domain.Response] {
 	return func(ctx server.ApiContext, req *emulator.Start) (*domain.Response, error) {
-		output, err := c.emu.Start(ctx.Context(), req.AVDName, req.Args...)
+		output, err := c.emu.Start(ctx.Context(), req.AVDName, req.Args)
 		if err != nil {
 			return nil, err
 		}
