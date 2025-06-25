@@ -3,8 +3,8 @@ package application
 import (
 	"android-cmd-server/internal/adapters"
 	"android-cmd-server/internal/api"
+	"android-cmd-server/internal/infrastructure/config"
 	"android-cmd-server/internal/infrastructure/shell"
-	"android-cmd-server/internal/infrastructure/system"
 	"context"
 )
 
@@ -18,15 +18,15 @@ type Application struct {
 func (a *Application) Startup(_ context.Context, app Module) (err error) {
 	executor := shell.NewExecutor()
 
-	sdkPath, err := system.FindAndroidSDKPath()
+	cfg, err := config.InitiateConfig()
 	if err != nil {
 		return err
 	}
 
-	sdkManager := adapters.NewSDKManager(executor, sdkPath)
-	avdManager := adapters.NewAVDManager(executor, sdkPath)
-	adb := adapters.NewAdb(executor, sdkPath)
-	emulator := adapters.NewEmulator(executor, sdkPath)
+	sdkManager := adapters.NewSDKManager(executor, cfg.SdkPath)
+	avdManager := adapters.NewAVDManager(executor, cfg.SdkPath)
+	adb := adapters.NewAdb(executor, cfg.SdkPath)
+	emulator := adapters.NewEmulator(executor, cfg.SdkPath)
 
 	api.NewAVDController(app.Api(), avdManager)
 	api.NewSDKController(app.Api(), sdkManager)
