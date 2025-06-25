@@ -2,7 +2,7 @@ class AndroidSdkServer < Formula
   desc "Service to manage Android SDK tasks over a server"
   homepage "https://github.com/ibrahimsn98/android-sdk-server"
   url "https://github.com/ibrahimsn98/android-sdk-server/archive/refs/tags/1.0.0.tar.gz"
-  sha256 "8f42e29fedca2488c202cfdd3e029604203489ad1bbc71627018871ed2b335bf"
+  sha256 "197c57bda6a62c8e4b9de5cbd679da16d8ade63f3ad378231d186278e01cf03f"
   license "Apache"
 
   depends_on "go" => :build
